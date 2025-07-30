@@ -1,0 +1,194 @@
+/* Reset básico */
+body, h1, h2, h3, p, ul {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Estilos generales */
+body {
+    background-color: #f4f4f4;
+    color: #333;
+    text-align: center;
+    padding: 20px;
+}
+
+/* Estilo del encabezado */
+header {
+    border-radius: 10px;
+    background-color: #0056b3;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    border: black solid 2px;
+}
+
+header nav {
+    margin-top: 10px;
+}
+
+header nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+    font-size: 16px;
+    padding: 8px 12px;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+header nav a:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Contenedor principal */
+main {
+    background: white;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    margin-bottom: 15px;
+}
+
+/* Lista de turnos */
+.turnos-lista {
+    list-style: none;
+    padding: 0;
+}
+
+.turno-item {
+    background: #e9ecef;
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Botón de reservar */
+.reservar-btn {
+    background-color: #28a745;
+    color: white;
+    padding: 8px 12px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+.reservar-btn:hover {
+    background-color: #218838;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    main {
+        width: 95%;
+        padding: 10px;
+    }
+
+    .turno-item {
+        flex-direction: column;
+        text-align: left;
+    }
+
+    .reservar-btn {
+        margin-top: 10px;
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Footer horizontal y a pantalla completa */
+footer {
+    background-color: #0056b3;
+    color: white;
+    padding: 10px 20px;
+    border-top: 2px solid black;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+
+    /* 🔽 Esto hace que ocupe todo el ancho */
+    width: 100%; 
+    max-width: none; /* 🔽 Asegura que no esté limitado */
+
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+/* Íconos de redes sociales */
+.footer-redes a {
+    color: white;
+    font-size: 20px;
+    margin: 0 8px;
+    transition: color 0.3s;
+}
+
+.footer-redes a:hover {
+    color: #ddd;
+}
+
+/* Información de contacto centrada */
+.footer-info {
+    flex-grow: 1;
+    text-align: center;
+}
+
+/* Mapa compacto */
+.footer-mapa iframe {
+    width: 180px;
+    height: 80px;
+    border: 0;
+    border-radius: 8px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    footer {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-mapa iframe {
+        width: 100%;
+        height: 200px;
+        margin-top: 10px;
+    }
+
+    .footer-info {
+        margin: 10px 0;
+    }
+}
+
+header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    background-color: #0056b3;
+    border-radius: 10px;
+    border: 2px solid black;
+    color: white;
+  }
+  
+  .logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .logo {
+    max-width: 150px;
+    height: auto;
+  }
+  

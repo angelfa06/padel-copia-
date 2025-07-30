@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administrar Turnos</title>
+  <link rel="stylesheet" href="styles-add-turnos.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"></script>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="logo-4.png" alt="Logo de la página" class="logo">
+    </div>
+    <h1>Administración de Turnos</h1>
+    <nav>
+      <a href="admin-turnos.html">Inicio</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Agregar Nuevo Turno</h2>
+
+    <label for="horarioTurno">Horario:</label>
+    <input type="time" id="horarioTurno">
+
+    <label for="precioTurno">Precio:</label>
+    <input type="number" id="precioTurno" min="0">
+
+    <label for="descripcionTurno">Descripción:</label>
+    <input type="text" id="descripcionTurno">
+
+    <button onclick="agregarTurno()">Agregar Turno</button>
+
+    <h2>Turnos Registrados</h2>
+    <ul id="listaTurnosAdmin"></ul>
+  </main>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const supabaseUrl = 'https://wgcutoyptajtgpzndqpa.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndnY3V0b3lwdGFqdGdwem5kcXBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA5NTg3OTQsImV4cCI6MjA2NjUzNDc5NH0.b3x9ZvdfdPTZHGAOun18ufGnP7IJKwq94zdkyv6vj64'; // pegá tu anon key actual
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    async function agregarTurno() {
+      const horario = document.getElementById("horarioTurno").value;
+      const precio = parseFloat(document.getElementById("precioTurno").value);
+      const descripcion = document.getElementById("descripcionTurno").value.trim();
+
+      if (!horario || !precio || !descripcion) {
+        alert("Por favor, complete todos los campos.");
+        return;
+      }
+
+      const fecha = new Date().toISOString().split("T")[0];
+
+      const { error } = await supabase.from("turnos").insert([{
+        fecha,
+        hora: horario,
+        jugador: descripcion,
+        total: precio,
+        pagado: false,
+        metodo_pago: ""
+      }]);
+
+      if (error) {
+        alert("Error al guardar turno: " + error.message);
+      } else {
+        alert("Turno agregado correctamente");
+        document.getElementById("horarioTurno").value = "";
+        document.getElementById("precioTurno").value = "";
+        document.getElementById("descripcionTurno").value = "";
+        actualizarListaTurnos();
+      }
+    }
+
+    async function actualizarListaTurnos() {
+      const lista = document.getElementById("listaTurnosAdmin");
+      lista.innerHTML = "";
+
+      const { data: turnos, error } = await supabase.from("turnos").select("*").order("hora", { ascending: true });
+
+      if (error) {
+        lista.innerHTML = "<li>Error al cargar turnos: " + error.message + "</li>";
+        return;
+      }
+
+      turnos.forEach(t => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <strong>${t.hora} - $${t.total}</strong> - ${t.jugador}
+          <button onclick="eliminarTurno(${t.id})">❌ Eliminar</button>
+        `;
+        lista.appendChild(li);
+      });
+    }
+
+    window.eliminarTurno = async function (id) {
+      if (!confirm("¿Estás seguro de eliminar este turno?")) return;
+
+      const { error } = await supabase.from("turnos").delete().eq("id", id);
+
+      if (error) {
+        alert("Error al eliminar: " + error.message);
+        return;
+      }
+
+      actualizarListaTurnos();
+    };
+
+    document.addEventListener("DOMContentLoaded", actualizarListaTurnos);
+  </script>
+
+</body>
+</html>

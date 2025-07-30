@@ -1,0 +1,174 @@
+/* Reset básico */
+body, h1, h2, h3, p, ul, table {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Estilos generales */
+body {
+    background-color: #f4f4f4;
+    color: #333;
+    text-align: center;
+    padding: 20px;
+}
+
+/* Estilo del encabezado */
+header {
+    border-radius: 10px;
+    background-color: #0056b3;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    border: black solid 2px;
+}
+
+header nav {
+    margin-top: 10px;
+}
+
+header nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 15px;
+    font-size: 18px;
+}
+
+header nav a:hover {
+    text-decoration: underline;
+}
+
+/* Contenedor principal */
+main {
+    background: white;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Formularios */
+form {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f8f8;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-top: 10px;
+}
+
+input, select {
+    width: calc(100% - 20px);
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: block;
+}
+
+button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-top: 10px;
+    width: auto;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+/* Lista de jugadores y pagos */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+ul li {
+    background: #e9ecef;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+ul li button {
+    background-color: #dc3545;
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+ul li button:hover {
+    background-color: #c82333;
+}
+
+/* Resumen del turno */
+#resumenTurno {
+    text-align: left;
+    padding-left: 20px;
+}
+
+#totalPagar {
+    font-size: 18px;
+    font-weight: bold;
+    color: #d9534f;
+}
+
+/* Botón de reinicio */
+#reiniciarTurno {
+    background-color: #ffc107;
+    color: black;
+}
+
+#reiniciarTurno:hover {
+    background-color: #e0a800;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    main {
+        width: 95%;
+        padding: 10px;
+    }
+
+    button {
+        width: 100%;
+    }
+}
+
+header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    background-color: #0056b3;
+    border-radius: 10px;
+    border: 2px solid black;
+    color: white;
+  }
+  
+  .logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .logo {
+    max-width: 150px;
+    height: auto;
+  }
+  

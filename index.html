@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Pádel - Turnos</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="logo-4.png" alt="Logo de la página" class="logo">
+          </div>
+        <nav>
+            <a href="index.html">Inicio</a>
+            <a href="admin2.html">turnos</a>
+            <a href="">compraa</a>
+            <a href="">Tarifas</a>
+            <a href="admin1.html">Admini</a>
+        </nav>
+    </header>
+    
+    <main>
+        <h2>Lista de Turnos</h2>
+        <ul id="listaTurnos" class="turnos-lista"></ul>
+    </main>
+
+    <footer>
+        <div class="footer-redes">
+            <a href="https://wa.me/549XXXXXXXXXX" target="_blank"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://instagram.com/tuusuario" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://facebook.com/tuusuario" target="_blank"><i class="fab fa-facebook-f"></i></a>
+        </div>
+    
+        <div class="footer-info">
+            <p>
+                📍 Vélez Sársfield 351 &nbsp; | &nbsp; 📞 +54 9 11 1234-5678 &nbsp; | &nbsp; 🕒 8 a 23 hs
+            </p>
+        </div>
+    
+        <div class="footer-mapa">
+            <iframe 
+                src="https://www.google.com.ar/maps/place/V%C3%A9lez+S%C3%A1rsfield+351,+T4152+Aguilares,+Tucum%C3%A1n/@-27.4297701,-65.6217708,15z/data=!3m1!4b1!4m6!3m5!1s0x9423c466c663da31:0xa5be881fb005c190!8m2!3d-27.4297895!4d-65.6114711!16s%2Fg%2F11s9kgvs03?hl=es&entry=ttu&g_ep=EgoyMDI1MDQwMi4xIKXMDSoASAFQAw%3D%3D" 
+                allowfullscreen="" 
+                loading="lazy">
+            </iframe>
+        </div>
+    </footer>
+    
+    
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const listaTurnos = document.getElementById("listaTurnos");
+            let turnos = JSON.parse(localStorage.getItem("turnos")) || [];
+    
+            function mostrarTurnos() {
+                listaTurnos.innerHTML = "";
+    
+                if (turnos.length === 0) {
+                    listaTurnos.innerHTML = "<li class='turno-item'>No hay turnos disponibles.</li>";
+                    return;
+                }
+    
+                turnos.forEach((turno, index) => {
+                    const horario = turno.horario || "Horario no disponible";
+                    const precio = turno.precio ? `$${turno.precio}` : "Precio no especificado";
+                    const descripcion = turno.descripcion || "Sin descripción";
+    
+                    const li = document.createElement("li");
+                    li.classList.add("turno-item");
+                    li.innerHTML = `
+                        <span>${horario} - ${precio} (${descripcion})</span>
+                        <a class="reservar-btn" href="https://wa.me/?text=Quiero%20reservar%20el%20turno%20a%20las%20${horario}" target="_blank" onclick="reservarTurno(${index})">Reservar</a>
+                    `;
+                    listaTurnos.appendChild(li);
+                });
+            }
+    
+            window.reservarTurno = (index) => {
+                turnos.splice(index, 1); // Elimina el turno reservado
+                localStorage.setItem("turnos", JSON.stringify(turnos)); // Guarda la nueva lista en localStorage
+                mostrarTurnos(); // Actualiza la lista en la página
+            };
+    
+            mostrarTurnos(); // Llamamos a la función para mostrar turnos al cargar la página
+        });
+    </script>
+    
+    
+</body>
+</html>

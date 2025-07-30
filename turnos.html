@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Gestión de Turnos</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"></script>
+  <link rel="stylesheet" href="styles-turnos.css">
+</head>
+
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="logo-4.png" alt="Logo de la página" class="logo">
+    </div>
+    <h1>Gestión de Turnos</h1>
+    <nav>
+      <a href="index.html">Volver al Inicio</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Nuevo Turno</h2>
+    <label for="precioTurno">Precio del Turno:</label>
+    <input type="number" id="precioTurno" value="" oninput="calcularResumen()">
+
+    <h3>Jugadores</h3>
+    <form id="jugadorForm">
+      <input type="text" id="nombreJugador" placeholder="Nombre del Jugador" required>
+      <button type="submit">Agregar Jugador</button>
+    </form>
+
+    <ul id="listaJugadores"></ul>
+
+    <h3>Productos Individuales</h3>
+    <form id="productoForm">
+      <select id="jugadorSeleccionado"></select>
+      <input type="text" id="productoNombre" placeholder="Producto" required>
+      <input type="number" id="productoPrecio" placeholder="Precio" required>
+      <button type="submit">Agregar Producto</button>
+    </form>
+
+    <h3>Registrar Pago</h3>
+    <form id="pagoForm">
+      <label for="jugadorPago">Seleccionar Jugador:</label>
+      <select id="jugadorPago"></select>
+
+      <label for="montoPago">Monto a Pagar:</label>
+      <input type="number" id="montoPago" required>
+
+      <label for="metodoPago">Método de Pago:</label>
+      <select id="metodoPago">
+        <option value="Efectivo">Efectivo</option>
+        <option value="Transferencia">Transferencia</option>
+      </select>
+
+      <button type="submit">Cobrar</button>
+    </form>
+
+    <h3>Pagos Registrados</h3>
+    <ul id="listaPagos"></ul>
+
+    <h2>Resumen del Turno</h2>
+    <ul id="resumenTurno"></ul>
+    <p><strong>Total a Pagar:</strong> $<span id="totalPagar">0</span></p>
+    <button onclick="reiniciarTurno()">Reiniciar Turno</button>
+  </main>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const supabaseUrl = 'https://wgcutoyptajtgpzndqpa.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndnY3V0b3lwdGFqdGdwem5kcXBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA5NTg3OTQsImV4cCI6MjA2NjUzNDc5NH0.b3x9ZvdfdPTZHGAOun18ufGnP7IJKwq94zdkyv6vj64';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    async function cargarProductos() {
+      const { data, error } = await supabase.from('productos').select('*');
+      if (error) {
+        console.error('Error cargando productos:', error.message);
+        return;
+      }
+      const lista = document.getElementById('listaProductos');
+      lista.innerHTML = '';
+      data.forEach(p => {
+        const li = document.createElement('li');
+        li.textContent = `${p.nombre} - $${p.precio} (stock: ${p.stock})`;
+        lista.appendChild(li);
+      });
+    }
+
+    document.getElementById('nuevoTurnoForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const jugador = document.getElementById('jugador').value.trim();
+      const hora = document.getElementById('hora').value;
+      const total = parseFloat(document.getElementById('precioTurno').value);
+      const fecha = new Date().toISOString().split('T')[0];
+
+      const { data, error } = await supabase.from('turnos').insert([{ jugador, hora, fecha, total }]).select();
+
+      if (error) {
+        alert('Error al guardar el turno: ' + error.message);
+      } else {
+        alert('Turno creado con ID: ' + data[0].id);
+      }
+    });
+
+    document.getElementById('formVenta').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const turnoId = parseInt(document.getElementById('turnoId').value);
+      const productoNombre = document.getElementById('productoNombre').value.trim();
+      const cantidad = parseInt(document.getElementById('cantidad').value);
+
+      // Buscar el producto
+      const { data: productos, error } = await supabase
+        .from('productos')
+        .select('*')
+        .eq('nombre', productoNombre)
+        .limit(1);
+
+      if (error || productos.length === 0) {
+        alert('Producto no encontrado');
+        return;
+      }
+
+      const producto = productos[0];
+      if (producto.stock < cantidad) {
+        alert('Stock insuficiente');
+        return;
+      }
+
+      const total = producto.precio * cantidad;
+
+      // Insertar venta
+      const { error: ventaError } = await supabase.from('ventas').insert([{
+        turno_id: turnoId,
+        producto_id: producto.id,
+        cantidad,
+        total
+      }]);
+
+      if (ventaError) {
+        alert('Error al registrar venta: ' + ventaError.message);
+        return;
+      }
+
+      // Descontar stock
+      await supabase
+        .from('productos')
+        .update({ stock: producto.stock - cantidad })
+        .eq('id', producto.id);
+
+      alert('Venta registrada y stock actualizado');
+      cargarProductos();
+    });
+
+    cargarProductos();
+  </script>
+</body>
+
+</html>

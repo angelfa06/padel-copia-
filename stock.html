@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control de Stock</title>
+  <link rel="stylesheet" href="styles-admin.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"></script>
+</head>
+<body>
+
+  <header>
+    <h1>Gestión de Stock</h1>
+    <nav>
+      <a href="admin.html">Volver al Panel</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Agregar Producto al Stock</h2>
+    <form id="stockForm">
+      <label for="nombreProducto">Nombre del Producto:</label>
+      <input type="text" id="nombreProducto" required>
+
+      <label for="cantidadProducto">Cantidad:</label>
+      <input type="number" id="cantidadProducto" min="1" required>
+
+      <button type="submit">Agregar al Stock</button>
+    </form>
+
+    <h2>Stock Disponible</h2>
+    <ul id="listaStock">
+      <!-- Se cargan productos desde Supabase -->
+    </ul>
+  </main>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const supabaseUrl = 'https://wgcutoyptajtgpzndqpa.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndnY3V0b3lwdGFqdGdwem5kcXBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA5NTg3OTQsImV4cCI6MjA2NjUzNDc5NH0.b3x9ZvdfdPTZHGAOun18ufGnP7IJKwq94zdkyv6vj64'; // tu anon key real
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    async function cargarStock() {
+      const lista = document.getElementById("listaStock");
+      lista.innerHTML = "";
+
+      const { data: productos, error } = await supabase.from('productos').select('*').order('nombre');
+      if (error) {
+        alert("Error al cargar productos: " + error.message);
+        return;
+      }
+
+      productos.forEach(prod => {
+        const li = document.createElement("li");
+        li.textContent = `${prod.nombre} - Cantidad: ${prod.stock}`;
+        lista.appendChild(li);
+      });
+    }
+
+    document.getElementById("stockForm").addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const nombre = document.getElementById("nombreProducto").value.trim();
+      const cantidad = parseInt(document.getElementById("cantidadProducto").value);
+
+      if (!nombre || isNaN(cantidad) || cantidad <= 0) {
+        alert("Datos inválidos.");
+        return;
+      }
+
+      const { data: productos } = await supabase
+        .from('productos')
+        .select('*')
+        .eq('nombre', nombre);
+
+      if (productos.length > 0) {
+        // Ya existe: actualizar stock
+        const producto = productos[0];
+        const nuevoStock = producto.stock + cantidad;
+
+        await supabase
+          .from('productos')
+          .update({ stock: nuevoStock })
+          .eq('id', producto.id);
+
+      } else {
+        // No existe: crear nuevo producto con precio 0
+        await supabase
+          .from('productos')
+          .insert([{ nombre, precio: 0, stock: cantidad }]);
+      }
+
+      document.getElementById("stockForm").reset();
+      cargarStock();
+      alert("Stock actualizado.");
+    });
+
+    cargarStock();
+  </script>
+
+</body>
+</html>

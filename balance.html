@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Balance Diario</title>
+  <link rel="stylesheet" href="styles-admin.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"></script>
+</head>
+<body>
+
+  <header>
+    <div class="logo-container">
+      <img src="logo-4.png" alt="Logo de la página" class="logo">
+    </div>
+    <h1>Balance Diario</h1>
+    <nav>
+      <a href="admin-turnos.html">Volver a la página anterior</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Resumen de Ventas</h2>
+    <p><strong>Total en Efectivo:</strong> $<span id="totalEfectivo">0</span></p>
+    <p><strong>Total en Transferencia:</strong> $<span id="totalTransferencia">0</span></p>
+    <p><strong>Total Recaudado:</strong> $<span id="totalRecaudado">0</span></p>
+
+    <h3>Lista de Pagos</h3>
+    <ul id="listaPagos"></ul>
+
+    <button onclick="cargarBalance()">🔄 Actualizar</button>
+  </main>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const supabaseUrl = 'https://wgcutoyptajtgpzndqpa.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndnY3V0b3lwdGFqdGdwem5kcXBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA5NTg3OTQsImV4cCI6MjA2NjUzNDc5NH0.b3x9ZvdfdPTZHGAOun18ufGnP7IJKwq94zdkyv6vj64'; // tu anon key
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    async function cargarBalance() {
+      const { data: turnos, error } = await supabase
+        .from("turnos")
+        .select("*")
+        .eq("pagado", true);
+
+      if (error) {
+        alert("Error al cargar balance: " + error.message);
+        return;
+      }
+
+      let totalEfectivo = 0;
+      let totalTransferencia = 0;
+      const lista = document.getElementById("listaPagos");
+      lista.innerHTML = "";
+
+      turnos.forEach(t => {
+        if (t.metodo_pago === "efectivo") {
+          totalEfectivo += t.total;
+        } else if (t.metodo_pago === "transferencia") {
+          totalTransferencia += t.total;
+        }
+
+        const li = document.createElement("li");
+        li.textContent = `${t.jugador} pagó $${t.total} en ${t.metodo_pago}`;
+        lista.appendChild(li);
+      });
+
+      document.getElementById("totalEfectivo").textContent = totalEfectivo;
+      document.getElementById("totalTransferencia").textContent = totalTransferencia;
+      document.getElementById("totalRecaudado").textContent = totalEfectivo + totalTransferencia;
+    }
+
+    cargarBalance();
+  </script>
+
+</body>
+</html>
