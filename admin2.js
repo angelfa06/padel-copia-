@@ -5,7 +5,7 @@ document.getElementById("login-form").addEventListener("submit", function (event
     const password = document.getElementById("password").value;
   
     // Validar credenciales
-    if (username === "LAVELEZPADEL" && password === "MAURO1234") {
+    if (username === "LAVELEZPADEL" && password === "123456") {
       // Redirigir a la página de administración
       window.location.href = "turnos.html"; // Reemplaza con la URL de tu panel de administración
     } else {
